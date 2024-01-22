@@ -1,0 +1,45 @@
+--- Makefile.orig	2024-01-22 06:46:33 UTC
++++ Makefile
+@@ -35,10 +35,10 @@ CMP = cmp
+ # destination with a trailing slash (or to just /, and copy the jove and recover
+ # binaries, and the doc subdirectory by hand)
+ 
+-JOVEHOME = /usr/local
++JOVEHOME = ${DESTDIR}${PREFIX}
+ JSHAREDIR = $(JOVEHOME)/share/jove
+ DSHAREDIR = $(DESTDIR)$(JSHAREDIR)
+-JLIBDIR = $(JOVEHOME)/lib/jove
++JLIBDIR = $(JOVEHOME)/libexec/jove
+ DLIBDIR = $(DESTDIR)$(JLIBDIR)
+ JBINDIR = $(JOVEHOME)/bin
+ DBINDIR = $(DESTDIR)$(JBINDIR)
+@@ -93,8 +93,8 @@ INSTALLFLAGS = # -g bin -o root
+ # XINSTALL to install executable files, prefer install since it is independent
+ # of user umask
+ # Linux/modern BSD/CYGWIN
+-XINSTALL=install $(INSTALLFLAGS) -m 755
+-TINSTALL=install $(INSTALLFLAGS) -m 444
++XINSTALL=${BSD_INSTALL_PROGRAM}
++TINSTALL=${BSD_INSTALL_DATA}
+ 
+ # These should all just be right if the above ones are.
+ # You will confuse JOVE if you move anything from LIBDIR or SHAREDIR.
+@@ -127,15 +127,15 @@ JOVETOOLM = $(DMANDIR)/jovetool.$(MANEXT)
+ # to CFLAGS.  This means the contents of CPPFLAGS will likely 
+ # appear twice in cc invocations on non-FreeBSD (i.e. OpenBSD, NetBSD, Linux)
+ # so best to avoid setting it (the default value is empty anyway)
+-SYSDEFS = -D`uname` -DJTC $(CPPFLAGS)
++SYSDEFS = -D`uname` -DJTC $(CPPFLAGS) -DBSDPOSIX
+ 
+ # OPTFLAGS: compiler flags that are passed to both the compiling & linking steps
+ # e.g. -g for debugging, -O for optimization.
+-OPTFLAGS = -O
++#OPTFLAGS = -O
+ 
+ # CFLAGS (i.e compile flags for the target compiler) are OPTFLAGS and SYSDEFS,
+ # DO NOT OVERRIDE
+-CFLAGS = $(OPTFLAGS) $(SYSDEFS)
++CFLAGS += $(OPTFLAGS) $(SYSDEFS)
+ 
+ # For making dependencies under BSD systems
+ DEPENDFLAG = -M
